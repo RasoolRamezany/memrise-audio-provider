@@ -2,8 +2,8 @@
 // @name           Memrise Audio Provider
 // @namespace      https://github.com/cooljingle
 // @description    Provides audio for any items you are learning which have none.
-// @match          https://www.memrise.com/course/*/garden/*
-// @match          https://www.memrise.com/garden/review/*
+// @match          https://www.deck.memrise.com/course/*/garden/*
+// @match          https://www.deck.memrise.com/garden/review/*
 // @version        0.1.26
 // @updateURL      https://github.com/cooljingle/memrise-audio-provider/raw/master/Memrise_Audio_Provider.user.js
 // @downloadURL    https://github.com/cooljingle/memrise-audio-provider/raw/master/Memrise_Audio_Provider.user.js
@@ -62,8 +62,8 @@ $(document).ready(function () {
     meta.content = "origin";
     document.getElementsByTagName('head')[0].appendChild(meta);
 
-    MEMRISE.garden._events.start.push(() => {
-        language = MEMRISE.garden.session.category.name;
+    deck.MEMRISE.garden._events.start.push(() => {
+        language = deck.MEMRISE.garden.session.category.name;
         if (speechSynthesisUtterance) {
             var langCode = speechSynthesisLanguageCodes[language];
             speechSynthesisUtterance.lang = langCode || "";
@@ -73,8 +73,8 @@ $(document).ready(function () {
             canSpeechSynthesize = !!(speechSynthesisUtterance.lang && speechSynthesisUtterance.voice);
         }
 
-        MEMRISE.garden.session.make_box = (function () {
-            var cached_function = MEMRISE.garden.session.make_box;
+        deck.MEMRISE.garden.session.make_box = (function () {
+            var cached_function = deck.MEMRISE.garden.session.make_box;
             return function () {
                 var result = cached_function.apply(this, arguments);
                 if (["end_of_session", "speed-count-down"].indexOf(result.template) < 0) {
@@ -101,8 +101,8 @@ $(document).ready(function () {
             };
         }());
 
-        MEMRISE.renderer.fixMediaUrl = (function () {
-            var cached_function = MEMRISE.renderer.fixMediaUrl;
+        deck.MEMRISE.renderer.fixMediaUrl = (function () {
+            var cached_function = deck.MEMRISE.renderer.fixMediaUrl;
             return function () {
                 if (overrideAllAudio || arguments[0] === "AUDIO_PROVIDER" || (_.isArray(arguments[0]) && arguments[0][0] === "AUDIO_PROVIDER")) {
                     return "";
@@ -112,8 +112,8 @@ $(document).ready(function () {
             };
         }());
 
-        MEMRISE.audioPlayer.play = (function () {
-            var cached_function = MEMRISE.audioPlayer.play;
+        deck.MEMRISE.audioPlayer.play = (function () {
+            var cached_function = deck.MEMRISE.audioPlayer.play;
             return function () {
                 var shouldGenerateAudio = (arguments[0].url === "");
                 if (shouldGenerateAudio) {
@@ -124,10 +124,10 @@ $(document).ready(function () {
             };
         }());
 
-        MEMRISE.garden.populateScreenAudios = function() {
-            _.each(MEMRISE.garden.learnables || _.indexBy(MEMRISE.garden.session_data.learnables, 'learnable_id'), function(v, k) {
-                var learnableScreens = (MEMRISE.garden.screens || MEMRISE.garden.session_data.screens)[k];
-                var screenMap = MEMRISE.garden.screen_template_map[k];
+        deck.MEMRISE.garden.populateScreenAudios = function() {
+            _.each(deck.MEMRISE.garden.learnables || _.indexBy(deck.MEMRISE.garden.session_data.learnables, 'learnable_id'), function(v, k) {
+                var learnableScreens = (deck.MEMRISE.garden.screens || deck.MEMRISE.garden.session_data.screens)[k];
+                var screenMap = deck.MEMRISE.garden.screen_template_map[k];
                 _.each([learnableScreens, screenMap], screens => {
                     _.each(screens, s => {
                         s = _.isArray(s) ? s[0] : s;
@@ -150,7 +150,7 @@ $(document).ready(function () {
             });
         };
 
-        MEMRISE.garden.populateScreenAudios();
+        deck.MEMRISE.garden.populateScreenAudios();
     });
 
     function editAudioOptions(context) {
@@ -188,7 +188,7 @@ $(document).ready(function () {
     }
 
     function getCourseId(context) {
-        return context.course_id || MEMRISE.garden.session_params.course_id || MEMRISE.garden.session_data.learnables_to_courses[context.learnable.learnable_id];
+        return context.course_id || deck.MEMRISE.garden.session_params.course_id || deck.MEMRISE.garden.session_data.learnables_to_courses[context.learnable.learnable_id];
     }
 
     function log(message) {
